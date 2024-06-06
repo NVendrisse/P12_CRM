@@ -1,14 +1,21 @@
-from peewee import SqliteDatabase, CharField, DateField, Model
+from peewee import CharField, DateField
+from .base import BaseModel
+from datetime import datetime
+from argon2 import PasswordHasher
 
-ee_database = SqliteDatabase("databases/epicevent.db")
 
-
-class Employee(Model):
-    login = CharField()
+class Employee(BaseModel):
+    login = CharField(unique=True)
     password = CharField()
     surname = CharField()
     name = CharField()
-    date_created = DateField()
+    date_created = DateField(default=datetime.now())
 
-    class Meta:
-        database = ee_database
+    def create(self):
+        pass_hasher = PasswordHasher()
+        self.password = pass_hasher.hash(password=self.password)
+        return self.save()
+
+    def update_password(self, new_password):
+        self.password = new_password
+        return self.create()
