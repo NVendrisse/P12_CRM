@@ -1,8 +1,8 @@
 from peewee import DateField, ForeignKeyField, FloatField, BooleanField
-from .base import BaseModel
+from crm.models.base import BaseModel
 from datetime import datetime
-from models.employee import Employee
-from models.client import Client
+from crm.models.employee import Employee
+from crm.models.client import Client
 
 
 class Contract(BaseModel):

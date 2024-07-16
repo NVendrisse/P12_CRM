@@ -1,5 +1,5 @@
 from peewee import CharField
-from .base import BaseModel
+from crm.models.base import BaseModel
 
 
 class Role(BaseModel):

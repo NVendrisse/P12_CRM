@@ -1,5 +1,5 @@
 from peewee import CharField, DateField, IntegerField, ForeignKeyField
-from .base import BaseModel
+from crm.models.base import BaseModel
 from datetime import datetime
 from models.client import Client
 from models.contract import Contract

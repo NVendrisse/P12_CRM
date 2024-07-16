@@ -1,5 +1,5 @@
 from peewee import ForeignKeyField
-from .base import BaseModel
+from crm.models.base import BaseModel
 from models.roles import Role
 from models.permission import Permission
 
