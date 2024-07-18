@@ -1,7 +1,7 @@
 import peewee
 from typer import Context
 from crm.models.employee import Employee
-from argon2 import PasswordHasher
+from argon2 import PasswordHasher, exceptions
 import jwt
 from datetime import datetime, timedelta
 import dotenv
@@ -15,7 +15,7 @@ class UserIsNotConnected(Exception):
     msg = "You cannot perform this action because you are not connected"
 
 
-def authenticate(login: str, password: str):
+def authenticate(login: str, password: str, output: bool = True):
     ph = PasswordHasher()
     try:
         query_user = Employee.get(Employee.login == login)
@@ -28,10 +28,15 @@ def authenticate(login: str, password: str):
                 "exp": datetime.now() + timedelta(hours=3),
             }
             token = jwt.encode(payload=payload_data, key="epicevent", algorithm="HS256")
-            dotenv.set_key(".env", "token", token)
+            if output:
+                dotenv.set_key(".env", "token", token)
+            else:
+                return True
         else:
             raise BadCredential
     except peewee.DoesNotExist:
+        raise BadCredential
+    except exceptions.VerifyMismatchError:
         raise BadCredential
 
 

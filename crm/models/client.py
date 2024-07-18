@@ -22,3 +22,8 @@ class Client(BaseModel):
         self.phone_number = new_number
         self.date_updated = datetime.now()
         self.save()
+
+    def update_contact(self, new_contact):
+        self.commercial_contact = new_contact
+        self.date_updated = datetime.now()
+        self.save()

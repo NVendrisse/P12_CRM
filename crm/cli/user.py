@@ -1,8 +1,10 @@
 import typer
-from typing import Tuple
+from peewee import DoesNotExist
 from typing_extensions import Annotated, Optional
 from crm.models.employee import Employee
-from crm.utils.authentification import authenticate, log_out
+from crm.models.roles import Role
+from crm.utils.authentification import authenticate, log_out, BadCredential
+from crm.utils.display import table_display
 
 user_app = typer.Typer()
 
@@ -44,18 +46,47 @@ def create_user(
 
 
 @user_app.command("search")
-def get_user(
+def list_user(
     login: Annotated[Optional[str], typer.Option()] = None,
     surname: Annotated[Optional[str], typer.Option()] = None,
     name: Annotated[Optional[str], typer.Option()] = None,
     role: Annotated[Optional[int], typer.Option()] = None,
 ):
 
-    results = Employee.select().where(
+    query = Employee.select().where(
         (Employee.login == login)
-        ^ (Employee.surname == surname)
-        ^ (Employee.name == name)
-        ^ (Employee.role == role)
+        | (Employee.surname == surname)
+        | (Employee.name == name)
+        | (Employee.role == role)
     )
-    s = results.execute()
-    print(len(s))
+    results = query.execute()
+    table_display("Employee query results", results)
+
+
+@user_app.command("update")
+def update_user_password(
+    login: Annotated[str, typer.Argument()],
+    old_password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
+    new_password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
+):
+    employee = Employee.get(Employee.login == login)
+    if authenticate(login, old_password, False):
+        employee.update_password(new_password)
+    else:
+        raise BadCredential
+
+
+@user_app.command("delete")
+def delete_employee(login: Annotated[str, typer.Argument()]):
+    try:
+        employee = Employee.get(Employee.login == login)
+        confirm = typer.confirm(
+            f"Are you sure you want to delete this user : '{employee.name} {employee.surname}' ?"
+        )
+        if confirm:
+            query = Employee.delete().where(Employee.id == employee.id)
+            query.execute()
+        else:
+            print("Delete aborted!")
+    except DoesNotExist:
+        return "There is no user with this login"
