@@ -1,6 +1,6 @@
 import typer
 from peewee import DoesNotExist
-from typing_extensions import Annotated, Optional
+from typing_extensions import Annotated
 from crm.models.client import Client
 from enum import Enum
 from crm.utils.validator import check_mail
