@@ -2,6 +2,7 @@ import typer
 from peewee import DoesNotExist
 from typing_extensions import Annotated, Optional
 from crm.models.employee import Employee
+from crm.models.employee import Role
 from crm.models.roles import Role
 from crm.utils.authentification import authenticate, log_out, BadCredential
 from crm.utils.display import table_display
@@ -21,6 +22,7 @@ def login(
 def logout():
     try:
         log_out()
+        print("Logged out!")
     except FileNotFoundError:
         pass
 
@@ -53,11 +55,15 @@ def list_user(
     role: Annotated[Optional[int], typer.Option()] = None,
 ):
 
-    query = Employee.select().where(
-        (Employee.login == login)
-        | (Employee.surname == surname)
-        | (Employee.name == name)
-        | (Employee.role == role)
+    query = (
+        Employee.select()
+        .join(Role.name)
+        .where(
+            (Employee.login == login)
+            | (Employee.surname == surname)
+            | (Employee.name == name)
+            | (Employee.role == role)
+        )
     )
     results = query.execute()
     table_display("Employee query results", results)
@@ -66,17 +72,21 @@ def list_user(
 @user_app.command("update")
 def update_user_password(
     login: Annotated[str, typer.Argument()],
-    old_password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
-    new_password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
+    old_password: Annotated[str, typer.Option(prompt=True, hide_input=True)] = None,
+    new_password: Annotated[str, typer.Option(prompt=True, hide_input=True)] = None,
 ):
     employee = Employee.get(Employee.login == login)
     if authenticate(login, old_password, False):
-        employee.update_password(new_password)
+        if not new_password == None:
+            employee.update_password(new_password)
     else:
         raise BadCredential
 
 
-@user_app.command("delete")
+# update name and surname
+
+
+@user_app.command("delete")  # is_active pas True
 def delete_employee(login: Annotated[str, typer.Argument()]):
     try:
         employee = Employee.get(Employee.login == login)

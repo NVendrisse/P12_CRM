@@ -1,4 +1,4 @@
-from peewee import CharField, DateField, ForeignKeyField
+from peewee import CharField, DateField, ForeignKeyField, BooleanField
 from crm.models.base import BaseModel
 from datetime import datetime
 from argon2 import PasswordHasher
@@ -12,7 +12,7 @@ class Employee(BaseModel):
     name = CharField()
     date_created = DateField(default=datetime.now())
     role = ForeignKeyField(model=Role, null=True)
-
+    is_active = BooleanField(default=False)
     permissions = []
 
     def create(self):

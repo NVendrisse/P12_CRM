@@ -73,21 +73,3 @@ def update(
             client.update_phone_number(new_value)
         elif section.value == "contact":
             client.update_contact(new_value)
-
-
-@client_app.command("delete")
-def delete(
-    name: Annotated[str, typer.Argument()], surname: Annotated[str, typer.Argument()]
-):
-    try:
-        client = Client.get((Client.name == name) & (Client.surname == surname))
-        confirm = typer.confirm(
-            f"Are you sure you want to delete this client : '{client.name} {client.surname}' ?"
-        )
-        if confirm:
-            query = Client.delete().where(Client.id == client.id)
-            query.execute()
-        else:
-            print("Delete aborted")
-    except DoesNotExist as e:
-        print(e)
