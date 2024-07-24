@@ -5,7 +5,7 @@ from crm.models.employee import Employee
 from crm.models.employee import Role
 from crm.models.roles import Role
 from crm.utils.authentification import authenticate, log_out, BadCredential
-from crm.utils.display import table_display
+from crm.utils.display import table_display, action_aborted, action_confirmed
 
 user_app = typer.Typer()
 
@@ -55,21 +55,19 @@ def list_user(
     role: Annotated[Optional[int], typer.Option()] = None,
 ):
 
-    query = (
-        Employee.select()
-        .join(Role.name)
-        .where(
-            (Employee.login == login)
-            | (Employee.surname == surname)
-            | (Employee.name == name)
-            | (Employee.role == role)
-        )
+    query = Employee.select(
+        Employee.login, Employee.name, Employee.surname, Employee.role
+    ).where(
+        (Employee.login == login)
+        | (Employee.surname == surname)
+        | (Employee.name == name)
+        | (Employee.role == role)
     )
     results = query.execute()
     table_display("Employee query results", results)
 
 
-@user_app.command("update")
+@user_app.command("changepsw")
 def update_user_password(
     login: Annotated[str, typer.Argument()],
     old_password: Annotated[str, typer.Option(prompt=True, hide_input=True)] = None,
@@ -79,14 +77,26 @@ def update_user_password(
     if authenticate(login, old_password, False):
         if not new_password == None:
             employee.update_password(new_password)
+            action_confirmed("Password changed")
     else:
         raise BadCredential
 
 
-# update name and surname
+@user_app.command("rename")
+def rename_user(
+    login: Annotated[str, typer.Argument()],
+    new_name: Annotated[str, typer.Option("-n")] = None,
+    new_surname: Annotated[str, typer.Option("-s")] = None,
+):
+    employee = Employee.get(Employee.login == login)
+    if new_name is not None:
+        employee.name = new_name
+    if new_surname is not None:
+        employee.surname = new_surname
+    employee.save()
 
 
-@user_app.command("delete")  # is_active pas True
+@user_app.command("delete")
 def delete_employee(login: Annotated[str, typer.Argument()]):
     try:
         employee = Employee.get(Employee.login == login)
@@ -94,9 +104,9 @@ def delete_employee(login: Annotated[str, typer.Argument()]):
             f"Are you sure you want to delete this user : '{employee.name} {employee.surname}' ?"
         )
         if confirm:
-            query = Employee.delete().where(Employee.id == employee.id)
-            query.execute()
+            employee.is_active = False
+            employee.save()
         else:
-            print("Delete aborted!")
+            action_aborted("Delete aborted")
     except DoesNotExist:
         return "There is no user with this login"

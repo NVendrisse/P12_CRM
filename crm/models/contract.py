@@ -34,6 +34,7 @@ class Contract(BaseModel):
         else:
             self.is_signed = False
         self.save()
+        return self.is_signed
 
     def cancel(self):
         self.is_cancelled = True

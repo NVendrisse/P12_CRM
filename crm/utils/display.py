@@ -17,3 +17,11 @@ def table_display(title: str = "", data=None):
         console.print(table)
     else:
         rprint("[bold red]No data found[/bold red]")
+
+
+def action_confirmed(action: str):
+    rprint(f"[bold bright_green]{action}[/bold bright_green]")
+
+
+def action_aborted(action: str):
+    rprint(f"[bold bright_red]{action}[/bold bright_red]")

@@ -1,14 +1,13 @@
 from peewee import CharField, DateField, IntegerField, ForeignKeyField
 from crm.models.base import BaseModel
 from datetime import datetime
-from models.client import Client
-from models.contract import Contract
-from models.employee import Employee
+from crm.models.client import Client
+from crm.models.contract import Contract
+from crm.models.employee import Employee
 
 
 class ContractNotSigned(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    msg = "The contract attributed to this event is not signed, cannot create this event, please check the contract before creating this event again"
 
 
 class Event(BaseModel):
