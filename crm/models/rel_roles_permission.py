@@ -1,7 +1,7 @@
 from peewee import ForeignKeyField
 from crm.models.base import BaseModel
-from models.roles import Role
-from models.permission import Permission
+from crm.models.roles import Role
+from crm.models.permission import Permission
 
 
 class RelationRolesPermission(BaseModel):

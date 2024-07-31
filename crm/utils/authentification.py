@@ -1,10 +1,14 @@
 import peewee
 from typer import Context
 from crm.models.employee import Employee
+from crm.models.rel_roles_permission import RelationRolesPermission as Relation
+from crm.models.roles import Role
+from crm.models.permission import Permission
 from argon2 import PasswordHasher, exceptions
 import jwt
 from datetime import datetime, timedelta
 import dotenv
+from crm.utils.display import table_display
 
 
 class BadCredential(Exception):
@@ -48,11 +52,29 @@ def check(context: Context):
         encrypted_token = dotenv.get_key(".env", "token")
         if not encrypted_token == None:
             token = jwt.decode(encrypted_token, "epicevent", algorithms=["HS256"])
+            # debug
+            print("///DEBUG///")
+            print(f"command invoked : {context.invoked_subcommand}")
+            print("///////////")
+            # end debug
+            set_user_permission(token["sub"])
         else:
             raise UserIsNotConnected
 
     except FileNotFoundError:
         print("File not found")
+
+
+def set_user_permission(user_id: int):
+    employee = Employee.get(Employee.id == user_id)
+    employee.permissions = []
+    query = Permission.select().join(Relation).where(Relation.role == employee.role)
+    for perm in query:
+        employee.permissions.append(perm.name)
+
+
+def has_permission(function: str):
+    return
 
 
 def log_out():
