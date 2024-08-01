@@ -19,6 +19,10 @@ class UserIsNotConnected(Exception):
     msg = "You cannot perform this action because you are not connected"
 
 
+class PermissionDenied(Exception):
+    msg = "You do not have the permission to perform this action"
+
+
 def authenticate(login: str, password: str, output: bool = True):
     ph = PasswordHasher()
     try:
@@ -52,12 +56,11 @@ def check(context: Context):
         encrypted_token = dotenv.get_key(".env", "token")
         if not encrypted_token == None:
             token = jwt.decode(encrypted_token, "epicevent", algorithms=["HS256"])
-            # debug
-            print("///DEBUG///")
-            print(f"command invoked : {context.invoked_subcommand}")
-            print("///////////")
-            # end debug
-            set_user_permission(token["sub"])
+            permission_needed = f"{context.invoked_subcommand}_{context.command.name}"
+            if has_permission(token["sub"], permission_needed):
+                return
+            else:
+                raise PermissionDenied
         else:
             raise UserIsNotConnected
 
@@ -65,16 +68,16 @@ def check(context: Context):
         print("File not found")
 
 
-def set_user_permission(user_id: int):
+def has_permission(user_id: int, asked_permission: str):
     employee = Employee.get(Employee.id == user_id)
     employee.permissions = []
     query = Permission.select().join(Relation).where(Relation.role == employee.role)
     for perm in query:
         employee.permissions.append(perm.name)
-
-
-def has_permission(function: str):
-    return
+    if asked_permission in employee.permissions:
+        return True
+    else:
+        return False
 
 
 def log_out():
