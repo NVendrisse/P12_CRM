@@ -4,6 +4,13 @@ from rich import print as rprint
 
 
 def table_display(title: str = "", data=None):
+    """
+    Create a table to display any information from any models of the application
+    title : string optionnal
+    data : any sql query result
+
+    Will print a message if there is no result for the initial query
+    """
     console = Console()
     table = Table(title=title)
     datatable = [*data]

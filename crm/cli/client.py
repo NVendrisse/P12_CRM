@@ -5,6 +5,7 @@ from crm.models.client import Client
 from enum import Enum
 from crm.utils.validator import check_mail
 from crm.utils.display import table_display
+from crm.utils.authentification import get_authenticated_user_id
 
 
 client_app = typer.Typer()
@@ -22,7 +23,6 @@ def create_client(
     surname: Annotated[str, typer.Option(prompt=True)],
     email: Annotated[str, typer.Option(prompt=True)],
     phone: Annotated[str, typer.Option(prompt=True)],
-    contact: Annotated[str, typer.Option(prompt=True)],
 ):
     if check_mail(email):
         client = Client(
@@ -30,7 +30,7 @@ def create_client(
             surname=surname,
             email=email,
             phone_number=phone,
-            commercial_contact=contact,
+            commercial_contact=get_authenticated_user_id(),
         )
         client.save()
 
@@ -66,7 +66,11 @@ def update(
     new_value: Annotated[str, typer.Argument()] = None,
 ):
     client = Client.get((Client.name == name) & (Client.surname == surname))
-    if not section == None and not new_value == None:
+    if (
+        not section == None
+        and not new_value == None
+        and client.commercial_contact.id == get_authenticated_user_id()
+    ):
         if section.value == "email":
             client.update_email(check_mail(new_value))
         elif section.value == "phone":

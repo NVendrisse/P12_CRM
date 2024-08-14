@@ -2,7 +2,9 @@ import typer
 from peewee import DoesNotExist
 from typing_extensions import Annotated, Optional
 from crm.models.event import Event, ContractNotSigned
+from crm.models.client import Client
 from crm.utils.display import table_display
+from crm.utils.authentification import get_authenticated_user_id
 
 event_app = typer.Typer()
 
@@ -29,7 +31,13 @@ def create_event(
         notes=notes,
     )
     try:
-        event.create_event()
+        client_contact = Client.get(Client.id == client)
+        if client_contact == get_authenticated_user_id():
+            event.create_event()
+        else:
+            print(
+                "It seems that you try to create an event but you are not the commercial contact associated with the client"
+            )
     except ContractNotSigned as e:
         print(e.msg)
 
@@ -50,5 +58,14 @@ def get_event(
 
 
 @event_app.command("update")
-def update_event(event_id: Annotated[int, typer.Argument()]):
-    return
+def update_event(
+    event_id: Annotated[int, typer.Argument()],
+    contact: Annotated[int, typer.Option()] = None,
+    notes: Annotated[str, typer.Option()] = None,
+):
+    event = Event.get(Event.id == event_id)
+    if not contact == None:
+        event.commercial_contact = contact
+    if not notes == None:
+        event.notes = notes
+    event.save()

@@ -22,9 +22,9 @@ def login(
 def logout():
     try:
         log_out()
-        print("Logged out!")
+        action_confirmed("Logged out!")
     except FileNotFoundError:
-        pass
+        action_aborted("Oops an error occured try to log in again")
 
 
 @user_app.command("create")
@@ -43,8 +43,11 @@ def create_user(
         new_user.name = name
         new_user.role = role
         new_user.create()
+        action_confirmed(f"{new_user.surname} {new_user.name} created succesfully!")
     except ValueError:
-        print("error")  # ajouter texte
+        action_aborted(
+            "One or more value you have entered is not correct, please try again"
+        )
 
 
 @user_app.command("search")
