@@ -1,6 +1,13 @@
 from peewee import SqliteDatabase, Model
+import os
 
-app_database = SqliteDatabase("databases/epicevent.db")
+try:
+    app_database = SqliteDatabase("databases/epicevent.db")
+except FileNotFoundError:
+    db = os.open("databases/epicevent.db", "x")
+    db.close()
+finally:
+    app_database = SqliteDatabase("databases/epicevent.db")
 
 
 class BaseModel(Model):

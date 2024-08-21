@@ -1,4 +1,4 @@
-from models.contract import Contract
+from crm.models.contract import Contract
 
 
 def test_create_contract():

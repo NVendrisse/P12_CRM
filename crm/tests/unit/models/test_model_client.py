@@ -1,4 +1,4 @@
-from models.client import Client
+from crm.models.client import Client
 
 
 def test_create_client():

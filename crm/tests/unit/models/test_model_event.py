@@ -1,4 +1,4 @@
-from models.event import Event
+from crm.models.event import Event
 
 
 def test_create_event():

@@ -60,7 +60,7 @@ def check(context: Context):
     This function is checking the auth status of the current session,
     whenever a user is using a command it will check if a user is connected and if he has the right to execute this command
     """
-    if context.invoked_subcommand in ["login", "logout"]:
+    if context.invoked_subcommand in ["login", "logout", "create_default"]:
         return
 
     try:
@@ -76,7 +76,9 @@ def check(context: Context):
             raise UserIsNotConnected
 
     except FileNotFoundError:
-        print("File not found")
+        print("Authentification file not found, please contact an administrator")
+    except jwt.ExpiredSignatureError:
+        print("The session as expired please connect")
 
 
 def has_permission(user_id: int, asked_permission: str):
@@ -96,7 +98,7 @@ def has_permission(user_id: int, asked_permission: str):
 
 def get_authenticated_user_id():
     """
-    Get the actualm autheticated user and return his id
+    Get the actual autheticated user and return his id
     """
     try:
         encrypted_token = dotenv.get_key(".env", "token")

@@ -20,6 +20,18 @@ def create_event(
     attendees: Annotated[int, typer.Option(prompt=True)],
     notes: Annotated[str, typer.Option(prompt=True)],
 ):
+    """Create a new event
+
+    Args:
+        contract (Annotated[int, typer.Option, optional): contract id. Defaults to True)].
+        client (Annotated[int, typer.Option, optional): client id. Defaults to True)].
+        start (Annotated[str, typer.Option, optional): start date. Defaults to True)].
+        end (Annotated[str, typer.Option, optional): end date. Defaults to True)].
+        contact (Annotated[int, typer.Option, optional): commercial contact id. Defaults to True)].
+        location (Annotated[str, typer.Option, optional): event location. Defaults to True)].
+        attendees (Annotated[int, typer.Option, optional): number of people participating. Defaults to True)].
+        notes (Annotated[str, typer.Option, optional): notes. Defaults to True)].
+    """
     event = Event(
         contract=contract,
         client=client,
@@ -48,6 +60,13 @@ def get_event(
     client: Annotated[int, typer.Option()] = None,
     contact: Annotated[int, typer.Option()] = None,
 ):
+    """Retrieve an event based on criteria
+
+    Args:
+        contract (Annotated[int, typer.Option, optional): contract id. Defaults to None.
+        client (Annotated[int, typer.Option, optional): client id. Defaults to None.
+        contact (Annotated[int, typer.Option, optional): commercial id. Defaults to None.
+    """
     query = Event.select().where(
         (Event.contract == contract)
         | (Event.client == client)
@@ -63,6 +82,13 @@ def update_event(
     contact: Annotated[int, typer.Option()] = None,
     notes: Annotated[str, typer.Option()] = None,
 ):
+    """get and update the contact section or notes associated at an event
+
+    Args:
+        event_id (Annotated[int, typer.Argument): id of the event
+        contact (Annotated[int, typer.Option, optional): new contact for the selected event. Defaults to None.
+        notes (Annotated[str, typer.Option, optional): new notes for the selected event. Defaults to None.
+    """
     event = Event.get(Event.id == event_id)
     if not contact == None:
         event.commercial_contact = contact

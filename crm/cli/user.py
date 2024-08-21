@@ -4,10 +4,26 @@ from typing_extensions import Annotated, Optional
 from crm.models.employee import Employee
 from crm.models.employee import Role
 from crm.models.roles import Role
-from crm.utils.authentification import authenticate, log_out, BadCredential
+from crm.utils.authentification import (
+    authenticate,
+    log_out,
+    get_authenticated_user_id,
+    BadCredential,
+)
 from crm.utils.display import table_display, action_aborted, action_confirmed
 
 user_app = typer.Typer()
+
+
+@user_app.command("create_default")
+def default_user():
+    user = Employee()
+    user.login = "default"
+    user.password = "password"
+    user.surname = ""
+    user.name = ""
+    user.role = 1
+    user.create()
 
 
 @user_app.command("login")
@@ -15,11 +31,22 @@ def login(
     login: Annotated[str, typer.Option(prompt=True)],
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
 ):
-    authenticate(login, password)
+    """Log the user
+
+    Args:
+        login (Annotated[str, typer.Option, optional): login of the user. Defaults to True)].
+        password (Annotated[str, typer.Option, optional): password of the user. Defaults to True, hide_input=True)].
+    """
+    try:
+        authenticate(login, password)
+        action_confirmed("Logged successfully")
+    except BadCredential:
+        action_aborted("You have enterred a wrong login or password")
 
 
 @user_app.command("logout")
 def logout():
+    """Log out the current user"""
     try:
         log_out()
         action_confirmed("Logged out!")
@@ -35,6 +62,15 @@ def create_user(
     name: Annotated[str, typer.Option(prompt=True)],
     role: Annotated[int, typer.Option(prompt=True)],
 ):
+    """Create a new user
+
+    Args:
+        login (Annotated[str, typer.Option, optional): login of the new user. Defaults to True)].
+        password (Annotated[str, typer.Option, optional): new default password for the user. Defaults to True)].
+        surname (Annotated[str, typer.Option, optional): new user surname. Defaults to True)].
+        name (Annotated[str, typer.Option, optional): new user name. Defaults to True)].
+        role (Annotated[int, typer.Option, optional): new user role. Defaults to True)].
+    """
     try:
         new_user = Employee()
         new_user.login = login
@@ -76,13 +112,28 @@ def update_user_password(
     old_password: Annotated[str, typer.Option(prompt=True, hide_input=True)] = None,
     new_password: Annotated[str, typer.Option(prompt=True, hide_input=True)] = None,
 ):
+    """Allow the connected user to change his password
+
+    Args:
+        login (Annotated[str, typer.Argument): Login of the user which the password will be changed
+        old_password (Annotated[str, typer.Option, optional): old user password. Defaults to True, hide_input=True)]=None.
+        new_password (Annotated[str, typer.Option, optional): new user password. Defaults to True, hide_input=True)]=None.
+
+    Raises:
+        BadCredential: _description_
+    """
     employee = Employee.get(Employee.login == login)
-    if authenticate(login, old_password, False):
+    if (
+        authenticate(login, old_password, False)
+        and employee.id == get_authenticated_user_id()
+    ):
         if not new_password == None:
             employee.update_password(new_password)
             action_confirmed("Password changed")
     else:
-        raise BadCredential
+        action_aborted(
+            "You have entered the wrong original password, or maybe you are not the user you try to update"
+        )
 
 
 @user_app.command("rename")
@@ -91,6 +142,13 @@ def rename_user(
     new_name: Annotated[str, typer.Option("-n")] = None,
     new_surname: Annotated[str, typer.Option("-s")] = None,
 ):
+    """Aloow user to be renamed
+
+    Args:
+        login (Annotated[str, typer.Argument): user login
+        new_name (Annotated[str, typer.Option, optional): new name for this user. Defaults to None.
+        new_surname (Annotated[str, typer.Option, optional): new surname for this user. Defaults to None.
+    """
     employee = Employee.get(Employee.login == login)
     if new_name is not None:
         employee.name = new_name
@@ -101,6 +159,12 @@ def rename_user(
 
 @user_app.command("delete")
 def delete_employee(login: Annotated[str, typer.Argument()]):
+    """Unactivate a user account
+
+    Args:
+        login (Annotated[str, typer.Argument): login of the user to disactivate
+
+    """
     try:
         employee = Employee.get(Employee.login == login)
         confirm = typer.confirm(

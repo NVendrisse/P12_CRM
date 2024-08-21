@@ -1,4 +1,4 @@
-from models.employee import Employee
+from crm.models.employee import Employee
 
 
 def test_create_employee():

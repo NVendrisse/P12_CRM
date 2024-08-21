@@ -2,6 +2,8 @@ from typer.testing import CliRunner
 from crm.__main__ import epicevent_app
 from crm.models.employee import Employee
 import pytest
+import sqlite3
+
 
 runner = CliRunner()
 Employee.delete().where(Employee.login == "pytest").execute()
@@ -22,7 +24,7 @@ def test_login_invalid_credential():
         assert e.msg == "Bad credential"
 
 
-def test_create_user():
+def test_create_user(memory_database):
     result = runner.invoke(
         epicevent_app,
         [
