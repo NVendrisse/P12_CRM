@@ -1,7 +1,7 @@
 from crm.models.event import Event
 
 
-def test_create_event():
+def test_create_event(memory_database):
     event = Event()
     event.contract = 1
     event.client = event.contract.client
@@ -14,17 +14,17 @@ def test_create_event():
     assert event.create_event()
 
 
-def test_get_event():
+def test_get_event(memory_database):
     event = Event.get(Event.location == "Amsterdam")
     assert event.attendees == 100
 
 
-def test_update_event():
+def test_update_event(memory_database):
     event = Event.get(Event.notes == "None")
     event.attendees = 150
     assert event.save()
 
 
-def test_delete_event():
+def test_delete_event(memory_database):
     query = Event.delete().where(Event.location == "Amsterdam")
     assert query.execute()

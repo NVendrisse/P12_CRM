@@ -9,22 +9,23 @@ runner = CliRunner()
 Employee.delete().where(Employee.login == "pytest").execute()
 
 
-def test_login_valid_credential():
+def test_login_valid_credential(user):
     result = runner.invoke(
-        epicevent_app, ["user", "login", "--login", "admin", "--password", "admin"]
+        epicevent_app, ["user", "login", "--login", "fixture", "--password", "psswd"]
     )
     assert result.exit_code == 0
 
 
-def test_login_invalid_credential():
+def test_login_invalid_credential(user):
     with pytest.raises(Exception) as e:
         result = runner.invoke(
-            epicevent_app, ["user", "login", "--login", "admin", "--password", "admin1"]
+            epicevent_app,
+            ["user", "login", "--login", "fixture", "--password", "admin1"],
         )
         assert e.msg == "Bad credential"
 
 
-def test_create_user(memory_database):
+def test_create_user(user):
     result = runner.invoke(
         epicevent_app,
         [
@@ -45,29 +46,29 @@ def test_create_user(memory_database):
     assert result.exit_code == 0
 
 
-def test_list_user():
+def test_list_user(user):
     result = runner.invoke(
         epicevent_app,
         [
             "user",
             "search",
             "--login",
-            "pytest",
+            "fixture",
         ],
     )
     assert result.exit_code == 0
 
 
-def test_change_user_password():
+def test_change_user_password(user):
     result = runner.invoke(
         epicevent_app,
         [
             "user",
             "changepsw",
             "--login",
-            "pytest",
+            "fixture",
             "--old_password",
-            "12340",
+            "psswd",
             "--new_password",
             "12345",
         ],
@@ -75,14 +76,14 @@ def test_change_user_password():
     assert result.exit_code == 0
 
 
-def test_rename_user():
+def test_rename_user(user):
     result = runner.invoke(
         epicevent_app,
         [
             "user",
             "rename",
             "--login",
-            "pytest",
+            "fixture",
             "-n",
             "pytest",
         ],
@@ -90,14 +91,14 @@ def test_rename_user():
     assert result.exit_code == 0
 
 
-def test_delete_user():
+def test_delete_user(user):
     result = runner.invoke(
         epicevent_app,
         [
             "user",
             "delete",
             "--login",
-            "pytest",
+            "fixture",
         ],
     )
     assert result.exit_code == 0

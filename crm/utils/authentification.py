@@ -12,7 +12,8 @@ from crm.utils.display import table_display
 
 
 class BadCredential(Exception):
-    msg = "Bad credential"
+    # msg = "Bad credential"
+    pass
 
 
 class UserIsNotConnected(Exception):

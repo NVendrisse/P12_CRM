@@ -5,7 +5,7 @@ import pytest
 runner = CliRunner()
 
 
-def test_create_event():
+def test_create_event(user):
     result = runner.invoke(
         epicevent_app,
         [
@@ -32,12 +32,12 @@ def test_create_event():
     assert result.exit_code == 0
 
 
-def test_get_event():
+def test_get_event(user):
     result = runner.invoke(epicevent_app, ["event", "search", "--contact", "1"])
     assert result.exit_code == 0
 
 
-def test_update_event():
+def test_update_event(user):
     result = runner.invoke(
         epicevent_app, ["event", "update", "event_id", "1", "--notes", "ok ok ok"]
     )

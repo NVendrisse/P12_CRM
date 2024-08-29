@@ -4,8 +4,8 @@ from crm.__main__ import epicevent_app
 runner = CliRunner()
 
 
-def test_create_client(memory_database):
-    runner.invoke(
+def test_create_client(user):
+    results = runner.invoke(
         epicevent_app,
         [
             "client",
@@ -20,9 +20,10 @@ def test_create_client(memory_database):
             "0258963147",
         ],
     )
+    assert results.exit_code == 0
 
 
-def test_get_client(memory_database):
+def test_get_client(user):
     results = runner.invoke(
         epicevent_app,
         [
@@ -35,12 +36,12 @@ def test_get_client(memory_database):
     assert results.exit_code == 0
 
 
-def test_get_all_client(memory_database):
+def test_get_all_client(user):
     results = runner.invoke(epicevent_app, ["client", "all"])
     assert results.exit_code == 0
 
 
-def test_update_client(memory_database):
+def test_update_client(user):
     results = runner.invoke(
         epicevent_app,
         [

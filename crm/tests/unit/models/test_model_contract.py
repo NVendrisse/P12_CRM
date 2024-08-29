@@ -1,7 +1,7 @@
 from crm.models.contract import Contract
 
 
-def test_create_contract():
+def test_create_contract(memory_database):
     new = Contract()
     new.client = 1
     new.contact = 1
@@ -10,29 +10,29 @@ def test_create_contract():
     assert new.save()
 
 
-def test_get_contract():
+def test_get_contract(memory_database):
     contract = Contract.get(Contract.id == 1)
     assert contract.total_cost == 1200
 
 
-def test_get_multiple_contracts():
+def test_get_multiple_contracts(memory_database):
     contracts = Contract.select().where(Contract.contact == 1)
     assert len(contracts) > 1
 
 
-def test_update_balance():
+def test_update_balance(memory_database):
     contract = Contract.get(Contract.id == 1)
     contract.update_remaining_balance(100.90)
     assert contract.remaining_balance == 100.90
 
 
-def test_sign_not_payed():
+def test_sign_not_payed(memory_database):
     contract = Contract.get(Contract.id == 1)
     contract.sign()
     assert not contract.is_signed
 
 
-def test_sign_payed():
+def test_sign_payed(memory_database):
     contract = Contract.get(Contract.id == 1)
     contract.update_remaining_balance(0)
     contract.sign()

@@ -8,9 +8,10 @@ from crm.models.event import Event
 from crm.models.permission import Permission
 from crm.models.rel_roles_permission import RelationRolesPermission
 from crm.models.roles import Role
+from databases.operation import fill_database_default
 
 
-@fixture(scope="session")
+@fixture(scope="function")
 def memory_database():
     try:
         db = SqliteDatabase(":memory:")
@@ -27,6 +28,19 @@ def memory_database():
 
         db.create_tables(MODELS)
         db.connect(True)
+        fill_database_default()
         yield db
     finally:
         db.close()
+
+
+@fixture
+def user(memory_database):
+    return_user = Employee()
+    return_user.login = "fixture"
+    return_user.password = "psswd"
+    return_user.name = "test"
+    return_user.surname = "fixt"
+    return_user.role = 4
+    return_user.create()
+    yield return_user

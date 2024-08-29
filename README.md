@@ -89,7 +89,33 @@ py -m crm user delete <login>
 ```
 ### Client related commands
 
+> **Create**
+
+```bash
+py -m crm client create
+```
+
+> **Search**
+
+```bash
+py -m crm client search <filter> <search string>
+```
+
+> **Update**
+
+```bash
+py -m crm client update <name> <surname> <section to update> <new value>
+```
+
+> **Get all client**
+
+```bash
+py -m crm client all
+```
+
 ### Contract related commands
+
+
 
 ### Event related commands
 

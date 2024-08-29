@@ -42,6 +42,7 @@ def login(
         action_confirmed("Logged successfully")
     except BadCredential:
         action_aborted("You have enterred a wrong login or password")
+        raise BadCredential
 
 
 @user_app.command("logout")
