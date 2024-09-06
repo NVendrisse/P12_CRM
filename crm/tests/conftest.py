@@ -34,6 +34,28 @@ def memory_database():
         db.close()
 
 
+@fixture(scope="session")
+def models_database():
+    try:
+        db = SqliteDatabase(":memory:")
+        MODELS = [
+            Client,
+            Contract,
+            Employee,
+            Event,
+            Permission,
+            RelationRolesPermission,
+            Role,
+        ]
+        db.bind(MODELS)
+
+        db.create_tables(MODELS)
+        db.connect(True)
+        yield db
+    finally:
+        db.close()
+
+
 @fixture
 def user(memory_database):
     return_user = Employee()

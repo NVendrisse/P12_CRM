@@ -34,19 +34,6 @@ py -m crm <command_name> --help
 
 **First install**
 
-In order to create the first user which allow you to create your user profile  
-The default user has ***limited permission*** as a management team member
-
-
-```bash
-py -m crm user create_default
-```
-
-after that you can log in with the following credential
-
-**login** : default  
-**password** : password
-
 
 
 ### Users related commands
@@ -115,7 +102,35 @@ py -m crm client all
 
 ### Contract related commands
 
+> **Create**
 
+```bash
+py -m crm contract create
+```
+
+> **Delete**
+
+```bash
+py -m crm contract delete <contract id>
+```
+
+> **Set the contract as payed**
+
+```bash
+py -m crm contract payment <condratc id> <optional new value : default = 0>
+```
+
+> **Search for one or more contract**
+
+```bash
+py -m crm contract search <search option> <search value>
+```
+
+> **Set a contract as signed**
+
+```bash
+py -m crm contract sign <condratc id>
+```
 
 ### Event related commands
 

@@ -45,4 +45,5 @@ def test_contract_payment(user):
 
 
 def test_delete_contract(user):
-    results = runner(epicevent_app, ["contract", "delete", "contract_id", "1"])
+    results = runner.invoke(epicevent_app, ["contract", "delete", "contract_id", "1"])
+    assert results.exit_code == 0

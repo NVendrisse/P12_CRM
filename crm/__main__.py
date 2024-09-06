@@ -31,27 +31,27 @@ sentry_sdk.init(
     dsn="https://e0d4fb09adf702b25cdb2da39cf36476@o4507448396218368.ingest.de.sentry.io/4507855997960272",
     traces_sample_rate=1.0,
     profiles_sample_rate=1.0,
+    debug=False,
 )
 
 if __name__ == "__main__":
-
     try:
-
         epicevent_app()
     except BadCredential as b:
-        sentry_sdk.capture_event(b)
-        print(b.msg)
+        sentry_sdk.capture_exception(b)
+
     except UserIsNotConnected as u:
-        sentry_sdk.capture_event(u)
+        sentry_sdk.capture_exception(u)
         print(u.msg)
     except PermissionDenied as p:
-        sentry_sdk.capture_event(p)
+        sentry_sdk.capture_exception(p)
         print(p.msg)
-    except OperationalError:
+    except OperationalError as o:
+        sentry_sdk.capture_exception(o)
         print(
             "An error occured with the database, creating a new one to maintain the application, please contact as soon as possible an administrator"
         )
         set_tables()
         fill_database_default()
     except Exception as excep:
-        sentry_sdk.capture_event(excep)
+        sentry_sdk.capture_exception(excep)

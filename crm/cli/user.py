@@ -15,17 +15,6 @@ from crm.utils.display import table_display, action_aborted, action_confirmed
 user_app = typer.Typer()
 
 
-@user_app.command("create_default")
-def default_user():
-    user = Employee()
-    user.login = "default"
-    user.password = "password"
-    user.surname = ""
-    user.name = ""
-    user.role = 1
-    user.create()
-
-
 @user_app.command("login")
 def login(
     login: Annotated[str, typer.Option(prompt=True)],
