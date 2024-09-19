@@ -65,11 +65,10 @@ def test_change_user_password(user):
         [
             "user",
             "changepsw",
-            "--login",
             "fixture",
-            "--old_password",
+            "--old-password",
             "psswd",
-            "--new_password",
+            "--new-password",
             "12345",
         ],
     )
@@ -82,7 +81,6 @@ def test_rename_user(user):
         [
             "user",
             "rename",
-            "--login",
             "fixture",
             "-n",
             "pytest",
@@ -97,7 +95,6 @@ def test_delete_user(user):
         [
             "user",
             "delete",
-            "--login",
             "fixture",
         ],
     )

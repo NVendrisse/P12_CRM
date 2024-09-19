@@ -32,10 +32,6 @@ pip install -r requirements.txt
 py -m crm <command_name> --help
 ```
 
-**First install**
-
-
-
 ### Users related commands
 
 >**Log in** 
@@ -133,6 +129,25 @@ py -m crm contract sign <condratc id>
 ```
 
 ### Event related commands
+
+> **Create**
+
+```bash
+py -m crm event create
+```
+
+> **Search**
+
+```bash
+py -m crm event search <search option>
+```
+
+> **Create**
+
+```bash
+py -m crm event update <id> <section to update>
+```
+
 
 ## Technology involved
 

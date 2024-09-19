@@ -66,5 +66,5 @@ def fill_database_default():
     for perm_id in commercial_perm:
         RelationRolesPermission(role=3, permission=perm_id).save()
 
-    for i in range(1, 18):
+    for i in range(1, 19):
         RelationRolesPermission(role=4, permission=i).save()

@@ -28,3 +28,35 @@ def test_app(user):
         ],
     )
     assert log.exit_code == 0
+    log = runner.invoke(
+        epicevent_app,
+        [
+            "client",
+            "create",
+            "--name",
+            "Lulu",
+            "--surname",
+            "Stucru",
+            "--email",
+            "lulu.stucru@gmail.com",
+            "--phone",
+            "0258963147",
+        ],
+    )
+    assert log.exit_code == 0
+    log = runner.invoke(
+        epicevent_app,
+        [
+            "contract",
+            "create",
+            "--client",
+            "1",
+            "--contact",
+            "1",
+            "--cost",
+            "100",
+            "--remaining_balance",
+            "0",
+        ],
+    )
+    assert log.exception

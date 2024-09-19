@@ -39,6 +39,6 @@ def test_get_event(user):
 
 def test_update_event(user):
     result = runner.invoke(
-        epicevent_app, ["event", "update", "event_id", "1", "--notes", "ok ok ok"]
+        epicevent_app, ["event", "update", "1", "--notes", "ok ok ok"]
     )
     assert result.exit_code == 0
