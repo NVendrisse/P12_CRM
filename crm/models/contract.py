@@ -29,11 +29,7 @@ class Contract(BaseModel):
         return self.save()
 
     def sign(self):
-        if self.is_payed:
-            self.is_signed = True
-        else:
-            self.is_signed = False
-        self.save()
+        self.is_signed = True
         return self.is_signed
 
     def cancel(self):

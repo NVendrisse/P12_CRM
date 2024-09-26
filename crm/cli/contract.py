@@ -46,9 +46,7 @@ def sign_contract(contract_id: Annotated[int, typer.Argument()] = None):
     if signed:
         action_confirmed(f"Contract {contract.id} signed !")
     else:
-        action_aborted(
-            f"Cannot sign contract {contract.id}, maybe it is not fully payed"
-        )
+        action_aborted(f"Cannot sign contract {contract.id}")
 
 
 @contract_app.command("payment")
